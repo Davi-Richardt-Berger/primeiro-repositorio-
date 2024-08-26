@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cantina Escolar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input[type="text"], input[type="number"], button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+
+        #tabs {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Cantina Escolar</h1>
+        <nav>
+            <ul>
+                <li><a href="#admin">Adicionar Cardápio</a></li>
+                <li><a href="#alunos">Escolher Lanches</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <div id="admin" class="tab active">
+            <h2>Adicionar Opções de Cardápio</h2>
+            <form id="formCardapio">
+                <label for="item">Nome do Item:</label>
+                <input type="text" id="item" name="item" required>
+
+                <label for="descricao">Descrição:</label>
+                <input type="text" id="descricao" name="descricao" required>
+
+                <button type="submit">Adicionar ao Cardápio</button>
+            </form>
+            <h3>Cardápio Atual</h3>
+            <table id="tabelaCardapio">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Opções de cardápio serão adicionadas aqui -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="alunos" class="tab">
+            <h2>Escolher Lanches</h2>
+            <table id="tabelaEscolha">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Descrição</th>
+                        <th>Escolher</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Opções de cardápio serão carregadas aqui para os alunos escolherem -->
+                </tbody>
+            </table>
+            <form id="formEscolha">
+                <label for="nomeAluno">Nome:</label>
+                <input type="text" id="nomeAluno" name="nomeAluno" required>
+
+                <label for="turmaAluno">Turma:</label>
+                <input type="text" id="turmaAluno" name="turmaAluno" required>
+
+                <button type="submit">Enviar Pedido</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cantina Escolar</p>
+    </footer>
+
+    <script>
+        // Funções para gerenciar abas
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Evento de clique para navegação entre abas
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                showTab(this.getAttribute('href').substring(1));
+            });
+        });
+
+        // Gerenciamento de cardápio
+        const formCardapio = document.getElementById('formCardapio');
+        const tabelaCardapio = document.getElementById('tabelaCardapio').getElementsByTagName('tbody')[0];
+        const tabelaEscolha = document.getElementById('tabelaEscolha').getElementsByTagName('tbody')[0];
+
+        formCardapio.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const item = document.getElementById('item').value;
+            const descricao = document.getElementById('descricao').value;
+
+            // Adiciona item ao cardápio
+            const row = tabelaCardapio.insertRow();
+            row.innerHTML = `
+                <td>${item}</td>
+                <td>${descricao}</td>
+            `;
+
+            // Adiciona item ao cardápio de escolha
+            const choiceRow = tabelaEscolha.insertRow();
+            choiceRow.innerHTML = `
+                <td>${item}</td>
+                <td>${descricao}</td>
+                <td><input type="checkbox" name="lanche" value="${item}"></td>
+            `;
+
+            // Limpa o formulário
+            formCardapio.reset();
+        });
+
+        // Gerenciamento de pedidos dos alunos
+        const formEscolha = document.getElementById('formEscolha');
+        formEscolha.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const nomeAluno = document.getElementById('nomeAluno').value;
+            const turmaAluno = document.getElementById('turmaAluno').value;
+            const selecionados = Array.from(document.querySelectorAll('input[name="lanche"]:checked'))
+                .map(cb => cb.value);
+
+            alert(`Pedido recebido!\nNome: ${nomeAluno}\nTurma: ${turmaAluno}\nLanches: ${selecionados.join(', ')}`);
+
+            formEscolha.reset();
+        });
+    </script>
+</body>
+</html>
